@@ -4,6 +4,7 @@ import copy
 from math import ceil
 import os
 import re
+import sys
 import warnings
 
 from Bio import SeqIO, AlignIO
@@ -181,9 +182,12 @@ def main():
     for file_name in os.listdir('./data/wt'):
         if m := re.match(r'(.+?)_sequence.dna', file_name):
             tag = m.group(1)
-            primers = find_primers(os.path.join('./data/wt', file_name))
-            for p in primers:
-                align_seq(tag, **p)
+            # if no cmd args, run all
+            # otherwise, only run the ones in the args
+            if len(sys.argv) == 1 or tag in sys.argv:
+                primers = find_primers(os.path.join('./data/wt', file_name))
+                for p in primers:
+                    align_seq(tag, **p)
 
 
 if __name__ == '__main__':
