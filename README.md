@@ -14,9 +14,13 @@ in the format of `<NAME>_sequence.dna`;
 `<NAME>-<GROUP_ID>-<ID>_PREMIX_<PLATE_NUM>.seq`;
 3. (Optional) Put an Excel file named `Chromatogram_Report.xlsx` into `./data/seq_results`. This will allow the error 
 message to show the trim value when the program failed to find the sub-sequence; 
-4. Execute
+4. To automatically run all DNAs in the `./data/wt/` directory:
 ```bash
 python3 align.py
+```
+To run only selected DNAs:
+```bash
+python3 align.py <DNA1 DNA2 ...>
 ```
 
 # Notes and Results
