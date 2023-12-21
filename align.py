@@ -139,6 +139,8 @@ def align_seq(tag, primer_start, primer_end, primer_start_name, primer_end_name,
             # multi-sequence alignment using clustal-omega
             if not os.path.isdir('output'):
                 os.mkdir('output')
+            if not os.path.isdir(os.path.join('output', tag)):
+                os.mkdir(os.path.join('output', tag))
 
             cmd = f'muscle -align tmp/input_clustal.fa -output tmp/alignment.aln -quiet'
 
@@ -154,7 +156,7 @@ def align_seq(tag, primer_start, primer_end, primer_start_name, primer_end_name,
                     alignment = sorted(alignment, key=lambda r: (not r.id.endswith('WT'), r.id))
                     html = aln2html(alignment)
 
-            with open(f'output/{seq_name}_{primer_start_name}_{primer_end_name}_alignment.html', 'w+') as handle:
+            with open(f'output/{tag}/{seq_name}_{primer_start_name}_{primer_end_name}_alignment.html', 'w+') as handle:
                 handle.write(html)
 
 
