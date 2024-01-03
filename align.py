@@ -3,6 +3,7 @@ from collections import defaultdict
 import copy
 from math import ceil
 import os
+import platform
 import re
 import sys
 import warnings
@@ -12,6 +13,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import pandas as pd
 import requests
+from tqdm.auto import tqdm
 
 PRIMER_PATTERN = r'<Primer recentID="\d+?" name="(.+?)" sequence="(\w+?)".*?><BindingSite location="(\d+)-(\d+)"'
 PRIMER_SLICE_SIZE = 10
@@ -93,8 +95,6 @@ def sub_seq(record: SeqRecord, start: str, end: str):
 
 
 def align_seq(tag, primer_start, primer_end, primer_start_name, primer_end_name, verbose=False):
-    print(f'aligning {tag} on primers {primer_start_name} and {primer_end_name}...')
-
     # reading files
     with open(f'data/wt/{tag}_sequence.dna', 'rb') as handle:
         for wt in SeqIO.parse(handle, 'snapgene'):
@@ -186,13 +186,14 @@ def main():
             # otherwise, only run the ones in the args
             if len(sys.argv) == 1 or tag in sys.argv:
                 primers = find_primers(os.path.join('./data/wt', file_name))
-                for p in primers:
+                print(f'aligning {tag}...', file=sys.stderr)
+                for p in tqdm(primers):
                     align_seq(tag, **p)
 
 
 if __name__ == '__main__':
-    # download muscle executable
-    if not os.path.exists('./muscle.exe'):
+    # If Windows, download muscle executable
+    if platform.system() == 'Windows' and not os.path.exists('./muscle.exe'):
         url = 'https://github.com/rcedgar/muscle/releases/download/5.1.0/muscle5.1.win64.exe'
         print(f'downloading {url}...')
         r = requests.get(url, allow_redirects=True)
