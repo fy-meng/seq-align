@@ -51,6 +51,9 @@ All commands are assumed to be run in Terminal.
    ```
 4. Install Python via Miniconda from https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html
 
+   __Important Note: Please install the Intel x86 version even if you are using an 
+   Apple Silicon Mac.__
+
    Follow the instructions from the graphical installer. Make sure that 
    `python` is linked to the Miniconda installation via:
    ```bash
