@@ -29,6 +29,24 @@ For all commands, use Powershell.
    git clone https://github.com/fy-meng/seq-align.git
    cd seq-align
    ```
+4. Create a virtual environment and install dependencies. First,
+   ```bash
+   conda create -n seq-align python=3.10
+   ```
+   Then activate the environment via
+   ```bash
+   conda activate seq-align
+   ```
+   You should see a `(seq-align)` before the prompt. Make sure that you are
+   in the script directory, then install dependencies via
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. Create the input folders for the script by running the following commands:
+   ```bash
+   mkdir data\wt
+   mkdir data\seq_results
+   ```
    
 ## macOS
 All commands are assumed to be run in Terminal.
@@ -62,7 +80,7 @@ All commands are assumed to be run in Terminal.
    which should return `<MINICONDA_INSTALL>/python`.
 5. Install Muscle5 using conda via
    ```bash
-   conda install bioconda::muscle
+   conda install muscle -c bioconda
    ```
    Check your Muscle installation via
    ```bash
@@ -74,48 +92,55 @@ All commands are assumed to be run in Terminal.
    git clone https://github.com/fy-meng/seq-align.git
    cd seq-align
    ```
+7. Create a virtual environment and install dependencies. First,
+   ```bash
+   conda create -n seq-align python=3.10
+   ```
+   Then activate the environment via
+   ```bash
+   conda activate seq-align
+   ```
+   You should see a `(seq-align)` before the prompt. Make sure that you are
+   in the script directory, then install dependencies via
+   ```bash
+   pip install -r requirements.txt
+   ```
+8. Create the input folders for the script by running the following commands:
+   ```bash
+   mkdir data
+   mkdir data/wt
+   mkdir data/seq_results
+   ```
 
 # Usage
 1. Open Anaconda Powershell Prompt (Windows) or Terminal (macOS). `cd` into the
    downloaded `seq-align` directory;
-2. Activate the environment
-   1. If this is the first time running the script, install dependencies. First, 
-      create a conda virtual environment via
-      ```bash
-      conda create -n seq-align python=3.10
-      ```
-      Then activate the environment via
-      ```bash
-      conda activate seq-align
-      ```
-      You should see a `(seq-align)` before the prompt. Then install dependencies 
-      via
-      ```bash
-      pip install -r requirements.txt
-      ```
-   2. Otherwise, activate the previously created environment via
+2. Activate the environment via
    ```bash
    conda activate seq-align
    ```
    You should see a `(seq-align)` before the prompt.
-3. Create a `data` directory. Create two directories, `wt` and `seq_results` 
-in `data`. You should have `./data/wt` and `./data/seq_results`. Put all `.dna` 
-files into `./data/wt/`. All files names should be in the format of 
-`<NAME>_sequence.dna`;
-4. Put all `.seq` sequencing results to be aligned into `./data/seq_results/`. 
-Ensure that all files are in the format of 
-`<NAME>-<GROUP_ID>-<ID>_PREMIX_<PLATE_NUM>.seq`;
-5. (Optional) Put an Excel file named `Chromatogram_Report.xlsx` into 
-`./data/seq_results`. This will allow the error message to show the trim value 
-when the program failed to find the sub-sequence;
-6. To run all DNAs in the `./data/wt/` directory:
-```bash
-python align.py
-```
-To run only selected DNAs:
-```bash
-python align.py <DNA1 DNA2 ...>
-```
+3. Put the input data in place:
+   1. Put all wild type `.dna` files into `./data/wt/`. All files names should 
+      be in the format of `<NAME>_sequence.dna`;
+   2. Put all `.seq` sequencing results to be aligned into 
+      `./data/seq_results/`. Ensure that all files are in the format of 
+      `<NAME>-<GROUP_ID>-<ID>_PREMIX_<PLATE_NUM>.seq`;
+   3. (Optional) Put an Excel file named `Chromatogram_Report.xlsx` into 
+      `./data/seq_results`. This will allow the error message to show the trim 
+      value when the program failed to find the sub-sequence;
+4. __(macOS ONLY)__ Run the following command:
+   ```bash
+   conda install muscle -c bioconda
+   ```
+5. Run the script. To run all DNAs in the `./data/wt/` directory:
+   ```bash
+   python align.py
+   ```
+   To run only selected DNAs:
+   ```bash
+   python align.py <DNA1 DNA2 ...>
+   ```
 
 # Results
 First, the program assumes that the primers stored in the `./data/wt/*.dna` are 
