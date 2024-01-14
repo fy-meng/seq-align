@@ -107,7 +107,7 @@ def align_seq(tag, primer_start, primer_end, primer_start_name, primer_end_name,
 
     mutations = defaultdict(lambda: dict())
     for file_name in os.listdir('data/seq_results'):
-        if m := re.match(rf'(({tag}-\w+)[-\w]+?_).*\.seq', file_name):
+        if m := re.match(rf'(({tag}-\w+)[-\w]+?)_.*\.seq', file_name):
             seq_name = m.group(2)
             with open(f'data/seq_results/{file_name}', 'r') as handle:
                 for record in SeqIO.parse(handle, 'fasta'):
