@@ -16,7 +16,7 @@ import requests
 from tqdm.auto import tqdm
 
 PRIMER_PATTERN = r'<Primer recentID="\d+?" name="(.+?)" sequence="(\w+?)".*?><BindingSite location="(\d+)-(\d+)"'
-PRIMER_SLICE_SIZE = 10
+PRIMER_SLICE_SIZE = 15
 BASE_COLORS = {
     'A': (105, 248, 112),
     'T': (244, 159, 17),
@@ -89,6 +89,17 @@ def sub_seq(record: SeqRecord, start: str, end: str):
 
     if len(start_idx) == 1 and len(end_idx) == 1:
         return record[start_idx[0]:end_idx[0] + len(end) + 1]
+    else:
+        err_msg = f'{record.name} failed'
+        if len(start_idx) == 0:
+            err_msg += f', PRIMER_F not found'
+        elif len(start_idx) > 1:
+            err_msg += f', PRIMER_F duplicated'
+        if len(end_idx) == 0:
+            err_msg += f', PRIMER_R not found'
+        elif len(end_idx) > 1:
+            err_msg += f', PRIMER_R duplicated'
+        warnings.warn(err_msg)
 
     # both failed
     return None
@@ -118,16 +129,15 @@ def align_seq(tag, primer_start, primer_end, primer_start_name, primer_end_name,
     for seq_name, d in mutations.items():
         records = []
         for file_name, record in d.items():
-            r = sub_seq(record, primer_start, primer_end)
-            if r:
-                records.append(r)
-            else:
-                if verbose:
-                    try:
-                        trim = report["Trim"].loc[file_name]
-                        warnings.warn(f'failed to find the subsequence for {record.name}, trim={trim}')
-                    except KeyError:
-                        warnings.warn(f'failed to find the subsequence for {record.name}')
+            with warnings.catch_warnings(record=True) as w:
+                r = sub_seq(record, primer_start, primer_end)
+                if r:
+                    records.append(r)
+            if verbose and len(w) > 0 and issubclass(w[0].category, UserWarning):
+                err_msg = str(w[0].message)
+                err_msg = err_msg.replace('PRIMER_F', primer_start_name)
+                err_msg = err_msg.replace('PRIMER_R', primer_end_name)
+                warnings.warn(err_msg)
         # output temporary multi-sequence file
         if len(records) > 0:
             if not os.path.isdir('tmp'):
