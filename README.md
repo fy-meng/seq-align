@@ -133,7 +133,20 @@ All commands are assumed to be run in Terminal.
    ```bash
    conda install muscle -c bioconda
    ```
-5. Run the script. To run all DNAs in the `./data/wt/` directory:
+5. Run the script. To open the GUI:
+   ```bash
+   python gui.py
+   ```
+   Then set the primer slicing size, select the wild type and mutation files,
+   and choose pairs of primers to search for each wild type file. The default 
+   selections of the primers are those with `'F'` in their names as the forward
+   primers, and those with `'R''` in their names as the reverse primers. Note 
+   that the program will attempt for all combinations of forward and reverse 
+   primers, given that the forward primer is before the reverse primer. (e.g. 
+   forward primers = (F1, F2), reverse primers = (R1, R2), F1 < R1 < F2 < R2, 
+   then the program will search try each of (F1, R1), (F1, R2), (F2, R2).)
+6. Alternatively, you can directly use the script with command line. To run all 
+   DNAs in the `./data/wt/` directory:
    ```bash
    python align.py
    ```
@@ -141,6 +154,8 @@ All commands are assumed to be run in Terminal.
    ```bash
    python align.py <DNA1 DNA2 ...>
    ```
+   Note that the program assumes that the forward primers are those with `'F'` 
+   in their names， and reverse primers are those `'R'` in their names.
 
 # Results
 First, the program assumes that the primers stored in the `./data/wt/*.dna` are 
