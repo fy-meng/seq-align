@@ -17,7 +17,8 @@ import requests
 
 WT_FILENAME_PATTERN = r'(.+?)_sequence.dna'
 SEQ_FILENAME_PATTERN = r'(({tag}-\w+)[-\w+]+?)_.*\.seq'
-PRIMER_PATTERN = r'<Primer recentID="\d+?" name="(.+?)" sequence="(\w+?)".*?><BindingSite location="(\d+)-(\d+)"'
+PRIMER_PATTERN = r'<Primer recentID="\d+?" name="(.+?)" sequence="(\w+?)".*?>(.+?)</Primer>'
+BINDING_SITE_PATTERN = r'<Component hybridizedRange="(\d+)-(\d+)" bases="(\w+)"/>'
 PRIMER_SLICE_SIZE = 15
 BASE_COLORS = {
     'A': (105, 248, 112),
@@ -233,7 +234,7 @@ def align_seqs(wt_filepath: str, seq_filepaths: List[str], primers: Iterable[Tup
                     handle.write(html)
 
 
-def find_primers(file_name: str) -> List[Tuple[str, str]]:
+def find_primers(file_name: str) -> List[Tuple[str, str, str, str]]:
     """
     Find all primers (names and DNA sequences) within a SnapGene DNA sequence.
     :param file_name: path to the SnapGene DNA file.
@@ -243,7 +244,16 @@ def find_primers(file_name: str) -> List[Tuple[str, str]]:
         dna_data = binascii.hexlify(f.read())
         dna_data = bytes.fromhex(dna_data.decode())
         dna_data = str(dna_data)
-    primers = list(re.findall(PRIMER_PATTERN, dna_data))
+    primers = []
+    for p in re.findall(PRIMER_PATTERN, dna_data):
+        name = p[0]
+        sequence = p[1]
+        binding_site_list = p[2]
+        binding_sites = list(re.findall(BINDING_SITE_PATTERN, binding_site_list))
+        for start_idx, end_idx, bases in binding_sites:
+            if sequence == bases:
+                primers.append((name, sequence, start_idx, end_idx))
+                break
     primers = sorted(primers, key=lambda p: int(p[2]))  # sorted by their location
     return primers
 
